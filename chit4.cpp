@@ -1,8 +1,9 @@
 /*Beginning with an empty binary tree, construct binary tree by inserting the values in the 
 order given. After constructing a binary tree perform following operations on it-
-• Perform preorder recursive traversal 
-• Postorder, Inorder non-recursive traversal
-• Count number of leaves, number of internal nodes.*/
+• Perform non-recursive inorder traversal, recursive postorder
+• Level wise printing
+• Display and count leaf nodes
+• Display and count internal nodes*/
 
 #include<iostream>
 #define size 20
@@ -85,10 +86,9 @@ public:
 	void insert(node*);
 	void postorder(node*);
 	void inorder(node*);
-    void preorder(node*);
+    int height(node*);
+    void level_print(node*, int);
     void count_nodes(node*);
-    // void swap(node*);
-    // void copy_tree(node*);
 };
 
 void bt::create()
@@ -172,7 +172,7 @@ void bt::insert(node *root)
 
 void bt::inorder(node *root)
 {
-	stack s;
+    stack s;
 	node *curr = root;
 	while(curr!=NULL || s.isempty()==false){
 		while(curr!= NULL){
@@ -186,44 +186,14 @@ void bt::inorder(node *root)
 	}
 }
 
-void bt::preorder(node *root)
-{
-	if(root!=NULL)
-	{
-		cout<<"  "<<root->data;
-		preorder(root->left);
-		preorder(root->right);
-	}
-}
-
 void bt::postorder(node *root){
 	if (root == NULL) 
         return; 
+    
+	postorder(root->left);
+	postorder(root->right);
+    cout<<"  "<<root->data;
 
-    stack s1, s2; 
-  
-    // push root to first stack 
-    s1.push(root); 
-    node* curr; 
-  
-    // Run while first stack is not empty 
-    while (!s1.isempty()) { 
-        // Pop an item from s1 and push it to s2 
-        curr = s1.Top(); 
-        s1.pop(); 
-        s2.push(curr); 
-		if (curr->left) 
-            s1.push(curr->left); 
-        if (curr->right) 
-            s1.push(curr->right); 
-    } 
-
-    // Print all elements of second stack 
-    while (!s2.isempty()) { 
-        curr = s2.Top(); 
-        s2.pop(); 
-        cout << curr->data << " "; 
-    } 
 }
 
 void bt::count_nodes(node* root){
@@ -239,29 +209,31 @@ void bt::count_nodes(node* root){
 	}
 }
 
-// void bt::swap(node* root){
-// 	if(root){
-// 		node* temp=root->left;
-// 		root->left=root->right;
-// 		root->right=temp;
+int bt::height(node* root){
+     if (root == NULL)
+        return 0;
+    else {
+        int lDepth = height(root->left);
+        int rDepth = height(root->right);
+ 
+        if (lDepth > rDepth)
+            return (lDepth + 1);
+        else
+            return (rDepth + 1);
+    }
+}
 
-// 		swap(root->left);
-// 		swap(root->right);
-// 	}
-// }
+void bt::level_print(node* root, int level){
+    if (root == NULL)
+        return;
+    if (level == 1)
+        cout<<root->data<<" ";
+    else if (level > 1) {
+        level_print(root->left, level - 1);
+        level_print(root->right, level - 1);
+    }
+}
 
-// void bt::copy_tree(node* root){
-// 	node* root1;
-// 	if(root){
-// 		root1=root;
-// 		root1->left=root->left;
-// 		root1->right=root->right;
-
-// 		copy_tree(root->left);
-// 		copy_tree(root->right);
-// 	}
-// 	preorder(root1);
-// }
 
 int main()
 {
@@ -269,7 +241,7 @@ int main()
 	int ch;
 	do
 	{
-		cout<<"\n1.create\n2.insert\n3.inorder\n4.preorder\n5.postorder\n6.count number of internal and external nodes";
+		cout<<"\n1.create\n2.insert\n3.inorder\n4.postorder\n5.count number of internal and external nodes\n6.print level-wise";
 		cout<<"\nenter your choice:";
 		cin>>ch;
 		switch(ch)
@@ -285,19 +257,23 @@ int main()
 					b.inorder(b.root);
 					break;
 			case 4:
-                    cout<<"preorder traversal is\n";
-					b.preorder(b.root);
-					break;
-			case 5:
                     cout<<"postorder traversal is\n";
 					b.postorder(b.root);
 					break;
-			case 6:
+			case 5:
 			       b.count_nodes(b.root);
 			   	   cout<<"Number of internal nodes: "<<intN;
 			   	   cout<<"\nNumber of external nodes: "<<extN<<endl;
 			       break;
-		}
+            case 6:
+                    int h = b.height(b.root);
+                    int i;
+                    for (i = 1; i <= h; i++) {
+                        b.level_print(b.root, i);
+                        cout<<endl;
+                    }
+    }
+
 	}while(ch!=0);
 	return 0;
 }

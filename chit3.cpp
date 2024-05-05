@@ -1,8 +1,8 @@
 /*Beginning with an empty binary tree, construct binary tree by inserting the values in the 
 order given. After constructing a binary tree perform following operations on it-
-• Perform preorder recursive traversal 
-• Postorder, Inorder non-recursive traversal
-• Count number of leaves, number of internal nodes.*/
+• Perform inorder, recursive traversal 
+• Preorder, post-order non-recursive traversal
+• Find mirror image of a tree*/
 
 #include<iostream>
 #define size 20
@@ -87,8 +87,7 @@ public:
 	void inorder(node*);
     void preorder(node*);
     void count_nodes(node*);
-    // void swap(node*);
-    // void copy_tree(node*);
+    void mirror(node*);
 };
 
 void bt::create()
@@ -172,28 +171,33 @@ void bt::insert(node *root)
 
 void bt::inorder(node *root)
 {
-	stack s;
-	node *curr = root;
-	while(curr!=NULL || s.isempty()==false){
-		while(curr!= NULL){
-			s.push(curr);
-			curr = curr->left;
-		}
-		curr = s.Top();
-		s.pop();
-		cout<<curr->data<<" ";
-		curr = curr->right;
-	}
+    if(root == NULL)
+        return;
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
 }
 
 void bt::preorder(node *root)
 {
-	if(root!=NULL)
-	{
-		cout<<"  "<<root->data;
-		preorder(root->left);
-		preorder(root->right);
-	}
+    
+    if (root == NULL)
+        return;
+ 
+    stack s;
+    s.push(root);
+ 
+    while (s.isempty() == false) {
+        node* curr = s.Top();
+        cout<<curr->data<<" ";
+        s.pop();
+ 
+        // Push right and left children of the popped node to stack
+        if (curr->right)
+            s.push(curr->right);
+        if (curr->left)
+            s.push(curr->left);
+    }
 }
 
 void bt::postorder(node *root){
@@ -226,42 +230,16 @@ void bt::postorder(node *root){
     } 
 }
 
-void bt::count_nodes(node* root){
+void bt::mirror(node* root){
 	if(root){
-		if(root->left || root->right){
-			intN++;
-		}
-		else{
-			extN++;
-		}
-		count_nodes(root->left);
-		count_nodes(root->right);
+		node* temp=root->left;
+		root->left=root->right;
+		root->right=temp;
+
+		mirror(root->left);
+		mirror(root->right);
 	}
 }
-
-// void bt::swap(node* root){
-// 	if(root){
-// 		node* temp=root->left;
-// 		root->left=root->right;
-// 		root->right=temp;
-
-// 		swap(root->left);
-// 		swap(root->right);
-// 	}
-// }
-
-// void bt::copy_tree(node* root){
-// 	node* root1;
-// 	if(root){
-// 		root1=root;
-// 		root1->left=root->left;
-// 		root1->right=root->right;
-
-// 		copy_tree(root->left);
-// 		copy_tree(root->right);
-// 	}
-// 	preorder(root1);
-// }
 
 int main()
 {
@@ -269,7 +247,7 @@ int main()
 	int ch;
 	do
 	{
-		cout<<"\n1.create\n2.insert\n3.inorder\n4.preorder\n5.postorder\n6.count number of internal and external nodes";
+		cout<<"\n1.create\n2.insert\n3.inorder\n4.preorder\n5.postorder\n6.find mirror image of tree";
 		cout<<"\nenter your choice:";
 		cin>>ch;
 		switch(ch)
@@ -293,9 +271,9 @@ int main()
 					b.postorder(b.root);
 					break;
 			case 6:
-			       b.count_nodes(b.root);
-			   	   cout<<"Number of internal nodes: "<<intN;
-			   	   cout<<"\nNumber of external nodes: "<<extN<<endl;
+			       b.mirror(b.root);
+                   cout<<"preorder for mirrored tree is: ";
+                   b.preorder(b.root);
 			       break;
 		}
 	}while(ch!=0);
