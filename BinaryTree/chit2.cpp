@@ -1,13 +1,13 @@
-/*Beginning with an empty binary tree, construct binary tree by inserting the values in the 
+/*
+Beginning with an empty binary tree, construct binary tree by inserting the values in the 
 order given. After constructing a binary tree perform following operations on it-
-• Perform non-recursive inorder traversal, recursive postorder
-• Level wise printing
-• Display and count leaf nodes
-• Display and count internal nodes*/
+• Perform post order recursive traversal 
+• Inorder, Preorder non-recursive traversal 
+• Find the height of tree */
 
 #include<iostream>
-#define size 20
 using namespace std;
+#define size 20
 
 static int intN=0,extN=0;
 int arr[10];
@@ -86,9 +86,9 @@ public:
 	void insert(node*);
 	void postorder(node*);
 	void inorder(node*);
-    int height(node*);
-    void level_print(node*, int);
+    void preorder(node*);
     void count_nodes(node*);
+    int height(node*);
 };
 
 void bt::create()
@@ -172,7 +172,7 @@ void bt::insert(node *root)
 
 void bt::inorder(node *root)
 {
-    stack s;
+	stack s;
 	node *curr = root;
 	while(curr!=NULL || s.isempty()==false){
 		while(curr!= NULL){
@@ -186,27 +186,33 @@ void bt::inorder(node *root)
 	}
 }
 
-void bt::postorder(node *root){
-	if (root == NULL) 
-        return; 
-    
-	postorder(root->left);
-	postorder(root->right);
-    cout<<"  "<<root->data;
-
+void bt::preorder(node *root)
+{
+	if (root == NULL)
+        return;
+ 
+    stack s;
+    s.push(root);
+ 
+    while (s.isempty() == false) {
+        node* curr = s.Top();
+        cout<<curr->data;
+        s.pop();
+ 
+        // Push right and left children of the popped node to stack
+        if (curr->right)
+            s.push(curr->right);
+        if (curr->left)
+            s.push(curr->left);
+    }
 }
 
-void bt::count_nodes(node* root){
-	if(root){
-		if(root->left || root->right){
-			intN++;
-		}
-		else{
-			extN++;
-		}
-		count_nodes(root->left);
-		count_nodes(root->right);
-	}
+void bt::postorder(node *root){
+    if(root!=NULL){
+        postorder(root->left);
+        postorder(root->right);
+        cout<<" "<<root->data;
+    }  
 }
 
 int bt::height(node* root){
@@ -223,17 +229,6 @@ int bt::height(node* root){
     }
 }
 
-void bt::level_print(node* root, int level){
-    if (root == NULL)
-        return;
-    if (level == 1)
-        cout<<root->data<<" ";
-    else if (level > 1) {
-        level_print(root->left, level - 1);
-        level_print(root->right, level - 1);
-    }
-}
-
 
 int main()
 {
@@ -241,7 +236,7 @@ int main()
 	int ch;
 	do
 	{
-		cout<<"\n1.create\n2.insert\n3.inorder\n4.postorder\n5.count number of internal and external nodes\n6.print level-wise";
+		cout<<"\n1.create\n2.insert\n3.inorder\n4.preorder\n5.postorder\n6.height of tree";
 		cout<<"\nenter your choice:";
 		cin>>ch;
 		switch(ch)
@@ -257,23 +252,17 @@ int main()
 					b.inorder(b.root);
 					break;
 			case 4:
+                    cout<<"preorder traversal is\n";
+					b.preorder(b.root);
+					break;
+			case 5:
                     cout<<"postorder traversal is\n";
 					b.postorder(b.root);
 					break;
-			case 5:
-			       b.count_nodes(b.root);
-			   	   cout<<"Number of internal nodes: "<<intN;
-			   	   cout<<"\nNumber of external nodes: "<<extN<<endl;
-			       break;
-            case 6:
-                    int h = b.height(b.root);
-                    int i;
-                    for (i = 1; i <= h; i++) {
-                        b.level_print(b.root, i);
-                        cout<<endl;
-                    }
-    }
-
+			case 6:
+                    cout<<"height of the tree is: "<<b.height(b.root);
+                    break;
+		}
 	}while(ch!=0);
 	return 0;
 }
