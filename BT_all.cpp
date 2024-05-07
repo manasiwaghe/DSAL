@@ -85,7 +85,7 @@ public:
 		root=NULL;
 	}
 
-	void create();
+	node* create(node*);
 	void insert(node*);
 	void postorder_rec(node*);
 	void inorder_rec(node*);
@@ -99,38 +99,23 @@ public:
     void level_print(node*, int);
 };
 
-void bt::create()
+node* bt::create(node *root)
 {
-	node *curr,*temp;
-	curr=new node;
-    
-    cout<<"enter data:";
-	cin>>curr->data;
-	curr->left=curr->right=NULL;
-		if(root==NULL){
-			root=curr;
-		}
-		else{
-			temp=root;
-			while(1)
-			{
-					if(temp->left==NULL)
-					{
-						temp->left=curr;
-						break;
-					}
-					else if(temp->right==NULL)
-					{
-						temp->right=curr;
-						break;
-					}
-					else
-					{
-						temp=temp->left;
-					}
-			}
-		}
-		cout<<"Node created :"<<curr->data;
+	node* newnode = new node;
+    cout << "Enter data for root: ";
+    cin >> newnode->data;
+    newnode->left = NULL;
+    newnode->right = NULL;
+
+    if (root == NULL) {
+        root = newnode;
+        cout << "Root created successfully\n";
+    }
+    else {
+        cout << "Root already exists\n";
+    }
+
+    return root;
 }
 
 void bt::insert(node *root)
@@ -324,6 +309,7 @@ void bt::level_print(node* root, int level){
 int main()
 {
 	bt b;
+	node *root = NULL;
 	int ch;
 	do
 	{
@@ -333,52 +319,54 @@ int main()
 		switch(ch)
 		{
 			case 1:
-                    b.create();
+                    root = b.create(root);
 				    break;
 			case 2:
-                    b.insert(b.root);
+                    b.insert(root);
 				    break;
 			case 3:
-                    cout<<"inorder recursive traversal is\n";
-					b.inorder_rec(b.root);
-                    cout<<"inorder non-recursive traversal is\n";
-                    b.inorder_nonrec(b.root);
+                    cout<<"\ninorder recursive traversal is";
+					b.inorder_rec(root);
+                    cout<<"\ninorder non-recursive traversal is";
+                    b.inorder_nonrec(root);
 					break;
 			case 4:
-                    cout<<"preorder recursive traversal is\n";
-					b.preorder_rec(b.root);
-                    cout<<"preorder non-recursive traversal is\n";
-					b.preorder_nonrec(b.root);
+                    cout<<"\npreorder recursive traversal is";
+					b.preorder_rec(root);
+                    cout<<"\npreorder non-recursive traversal is";
+					b.preorder_nonrec(root);
 					break;
 			case 5:
-                    cout<<"postorder recursive traversal is\n";
-					b.postorder_rec(b.root);
-                    cout<<"postorder non-recursive traversal is\n";
-					b.postorder_nonrec(b.root);
+                    cout<<"\npostorder recursive traversal is";
+					b.postorder_rec(root);
+                    cout<<"\npostorder non-recursive traversal is";
+					b.postorder_nonrec(root);
 					break;
 			case 6:
-                    cout<<"height of the tree is: "<<b.height(b.root);
+                    cout<<"height of the tree is: "<<b.height(root);
                     break;
             case 7:
-                    b.count_nodes(b.root);
+                    b.count_nodes(root);
                     cout<<"Number of internal nodes: "<<intN;
 			   	    cout<<"\nNumber of external nodes: "<<extN<<endl;
                     break;
             case 8:
-                    int h = b.height(b.root);
+			  		{
+					int h = b.height(root);
                     int i;
                     for (i = 1; i <= h; i++) {
-                        b.level_print(b.root, i);
+                        b.level_print(root, i);
                         cout<<endl;
                     }
                     break;
+					}
 
             case 9:
                     cout<<"Inorder before mirroring: ";
-                    b.inorder_rec(b.root);
-                    b.mirror(b.root);
+                    b.inorder_rec(root);
+                    b.mirror(root);
                     cout<<"Inorder after mirroring: ";
-                    b.inorder_rec(b.root);
+                    b.inorder_rec(root);
                     break;
 		}
 	}while(ch!=0);

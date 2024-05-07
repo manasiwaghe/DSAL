@@ -197,55 +197,57 @@ int BSTree::height(node* root){
     }
 }
 
-node* maxValue(node *root){
-    if(root==NULL){
-        return 0;
-    }
-    node *temp =root;
-    while(temp->right!=NULL){
-        temp= temp->right;
-    }
-    return temp;
-}
-
-node* BSTree::deleteNode(node* root, int key){
-    if(root==NULL)
-            return root;
-        
-        if(root->data ==key){
-            // for 0 child
-            if(root->left==NULL && root->right ==NULL){
-                delete root;
-                return NULL;
-            }
-            // for 1 child
-            if(root->left!=NULL && root->right ==NULL){
-                node *temp = root->left;
-                delete root;
-                return temp;
-            }
-             if(root->left==NULL && root->right !=NULL){
-                node *temp = root->right;
-                delete root;
-                return temp;
-            }
-            // for 2 child
-            if(root->left!=NULL && root->right!=NULL){
-            int maxi = maxValue(root->left)->data;
-              root->data = maxi;
-              root->left = deleteNode(root->left,maxi);
-              return root;
-            }
-        }
-        else if(root->data >key){
-            root->left= deleteNode(root->left,key);
-            return root;
-        }
-        else{
-            root->right = deleteNode(root->right,key);
-            return root;
-        }
+node* BSTree::deleteNode(node* root, int k){
+    // Base case
+    if (root == NULL)
         return root;
+
+    // If the key to be deleted is smaller than the root's key,
+    // then it lies in the left subtree
+    if (k < root->data) {
+        root->left = deleteNode(root->left, k);
+        return root;
+    }
+    // If the key to be deleted is greater than the root's key,
+    // then it lies in the right subtree
+    else if (k > root->data) {
+        root->right = deleteNode(root->right, k);
+        return root;
+    }
+
+    // If key is same as root's key, then this is the node to be deleted
+    // Node with only one child or no child
+    if (root->left == NULL) {
+        node* temp = root->right;
+        delete root;
+        return temp;
+    }
+    else if (root->right == NULL) {
+        node* temp = root->left;
+        delete root;
+        return temp;
+    }
+
+    // Node with two children: Get the inorder successor (smallest
+    // in the right subtree)
+    node* succParent = root;
+    node* succ = root->right;
+    while (succ->left != NULL) {
+        succParent = succ;
+        succ = succ->left;
+    }
+
+    // Copy the inorder successor's content to this node
+    root->data = succ->data;
+
+    // Delete the inorder successor
+    if (succParent->left == succ)
+        succParent->left = succ->right;
+    else
+        succParent->right = succ->right;
+    
+    delete succ;
+    return root;
 }
 
 void BSTree::minElement(node* root){
