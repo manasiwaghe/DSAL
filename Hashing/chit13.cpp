@@ -1,149 +1,190 @@
-/* Implement all the functions of a dictionary (ADT) using open hashing technique: separate 
-chaining using linked list Data: Set of (key, value) pairs, Keys are mapped to values, Keys 
-must be comparable, and Keys must be unique. Standard Operations: Insert (key, value), 
-Find(key), Delete(key). Use hash function as H(x) = (3x+5) %10 
-*/
 
 #include <iostream>
-#define tableSize 10
+#define size 10
 using namespace std;
 
-class SLLNode{
-private:
-	int key;
-	char value[20];
-	SLLNode *next;
+class DictNode
+{
+    string key;
+    string value;
+    DictNode *next;
 
 public:
-    friend class openHash;
-} *HashTable[10];
+    DictNode()
+    {
+        key = "-";
+        value = "-";
+        next = NULL;
+    }
 
-class openHash{
-public:
-	void insert_key(SLLNode *head);
-	void displayHT();
-	void search(int key);
-    void del(int key,SLLNode *head);
+    DictNode(string word, string meaning)
+    {
+        key = word;
+        value = meaning;
+        next = NULL;
+    }
+
+    friend class HashList;
 };
 
-void openHash::insert_key(SLLNode *head){
-	SLLNode *newnode = new SLLNode;
-	SLLNode *temp;
-	cout << "Enter key for the new node: ";
-	cin >> newnode->key;
-	cout << "Enter value for the new node: ";
-	cin >> newnode->value;
+class HashList
+{
+    DictNode *list[size];
 
-	newnode->next = NULL;
+public:
+    HashList()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            list[i] = NULL;
+        }
+    }
 
-	if(head == NULL){
-		head = newnode;
-	}
-	else{
-		temp = head;
-		while(temp->next != NULL){
-			temp = temp->next;
-		}
-		temp->next = newnode;
-	}
+    int hashFunc(string word)
+    {
+        return ((int)word[0] % 10);
+    }
 
-	int key = newnode->key;
+    void insert(DictNode *n)
+    {
+        int index = hashFunc(n->key);
 
-	int index = (3*key + 5)% tableSize;
+        if (list[index] == NULL)
+        {
+            list[index] = n;
+        }
+        else
+        {
+            DictNode *q = list[index];
+            while (q->next != NULL)
+            {
+                q = q->next;
+            }
+            q->next = n;
+        }
+    }
 
-	if(HashTable[index] == NULL){
-		HashTable[index] = newnode;
-	}
-	else{
-		temp = HashTable[index];
-		while(temp->next != NULL){
-			temp = temp->next;
-		}
-		temp->next = newnode;
-	}
-}
+    int search(string word)
+    {
+        int hashNo = hashFunc(word);
+        DictNode *q = list[hashNo];
+        while (q != NULL)
+        {
+            if (q->key == word)
+            {
+                cout << "\nMeaning of " << word << " is " << q->value;
+                return 1;
+            }
+            q = q->next;
+        }
+        return 0;
+    }
 
-void openHash::displayHT(){
-	for(int i=0;i<tableSize; i++){
-		SLLNode *temp = HashTable[i];
-		while(temp!= NULL){
-            cout<< i <<"-> ";
-			cout << temp->key << "  ";
-			cout << temp->value << endl;
-			temp = temp->next;
-		}
-	}
-}
+    void del(string word)
+    {
+        int hashNo = hashFunc(word);
+        DictNode *q = list[hashNo];
+        DictNode *par = NULL;
+        while (q != NULL)
+        {
+            if (q->key == word)
+            {
+                if(par == NULL)
+                {
+                    list[hashNo] = q->next;
+                    break;
+                }
+                else
+                {
+                    par->next = q->next;
+                    break;
+                }
+            }
+            par = q;
+            q = q->next;
+        }
+        if (q == NULL)
+        {
+            cout << "\nWord does not exist in dictionary.";
+        }
+    }
 
-void openHash::search(int key){
-	bool flag = false;
-	int cmp = 0;
-	for(int i=0;i<tableSize; i++){
-		SLLNode *temp = HashTable[i];
-		while(temp != NULL){
-			if(temp->key == key){
-				cout << "The value for the given key is: " << temp->value;
-				cout << "\nThe number of comparisons required are: " << cmp;
-				flag = true;
-				break;
-			}
-			else{
-				temp = temp->next;
-			}
-			cmp++;
-		}
-	}
-	if(flag==false){
-		cout << "The key doesn't exist!";
-		cout << "\nThe number of comparisons required are: " << cmp;
-	}
-}
+    void display()
+    {
+        cout << "\nIndex\tKey-Value pairs";
+        for (int i = 0; i < size; i++)
+        {
+            DictNode *q = list[i];
+            cout << "\n"
+                 << i << "\t";
+            while (q != NULL)
+            {
+                cout << q->key << "->" << q->value << "----";
+                q = q->next;
+            }
+        }
+    }
+};
 
-void openHash::del(int key,SLLNode *head){
-    SLLNode *curr = head,*prev =head;
-    for(int i=0;i<tableSize; i++){
-		prev = HashTable[i];
-		while(prev != NULL){
-			if(prev->next->key == key){
-                curr = prev->next;
-				break;
-			}
-			else{
-				prev = prev->next;
-			}
-		}
-	}
-    prev->next = curr->next;
-    delete curr;
-    cout<<"Key deleted successfully!";
-}
+int main()
+{
 
-int main() {
-	SLLNode *head=NULL;
-	openHash t;
+    HashList HL;
 
-	int n;
-	cout<< "Enter the number of values you want to insert: ";
-	cin >> n;
+    int ch;
+    do
+    {
+        cout << "\n\n\t\tMenu:\n\t1.Insert Word\n\t2.Search a word\n\t3.Delete word\n\t4.Exit";
+        cout << "\nEnter your choice : ";
+        cin >> ch;
+        string w;
 
-	for(int i=0;i<n;i++){
-		t.insert_key(head);
-	}
+        switch (ch)
+        {
+        case 1:
+            int cont;
+            do
+            {
+                string word, meaning;
+                cout << "\nEnter the word to be inserted : ";
+                cin >> word;
+                cout << "\nEnter its meaning : ";
+                cin >> meaning;
+                DictNode *N1 = new DictNode(word, meaning);
+                HL.insert(N1);
+                cout << "\nContinue adding words?(1:yes,2:no)";
+                cin >> cont;
+            } while (cont == 1);
+            HL.display();
+            break;
 
-	t.displayHT();
+        case 2:
+            cout << "\nEnter word to be searched : ";
+            cin >> w;
+            if (HL.search(w) == 1)
+            {
+                cout << "\nWord is present in the list.";
+            }
+            else
+            {
+                cout << "\nWord is not present in the list.";
+            }
+            break;
 
-	int key;
-	cout << "Enter the key you want to search";
-	cin >> key;
-	t.search(key);
+        case 3:
+            cout << "\nEnter word to be deleted : ";
+            cin >> w;
+            HL.del(w);
+            HL.display();
+            break;
 
-    int delkey;
-    cout<<"Enter the key you want to delete: ";
-    cin>>delkey;
-    t.del(delkey,head);
+        case 4:
+            cout << "\nExiting program.";
+            break;
 
-    cout<<"Hash Table after deletion"<<endl;
-    t.displayHT();
-
-	return 0;
+        default:
+            cout << "\nWrong choice";
+        }
+    } while (ch != 4);
+    return 0;
 }

@@ -1,173 +1,190 @@
-/* Consider telephone book cbase of N clients. Make use of a hash table implementation
-to quickly look up client‘s telephone number. Make use of two collision handling
-techniques and compare them using number of comparisons required to find a set of
-telephone numbers (Note: Use linear probing with replacement and without
-replacement). Perform following operations
-1) Insert
-2) Display
-3) Search (number of comparisons required to search)
-Use Hash function as H(x) = (3*x + 5)%10*/
 
 #include <iostream>
-#include <cstring>
-#define max 10
+#define size 10
 using namespace std;
 
-class client
+class DictNode
 {
-private:
-    char clientname[20];
-    long long phone;
+    string key;
+    string value;
+    DictNode *next;
 
 public:
-    friend class hashtable;
+    DictNode()
+    {
+        key = "-";
+        value = "-";
+        next = NULL;
+    }
+
+    DictNode(string word, string meaning)
+    {
+        key = word;
+        value = meaning;
+        next = NULL;
+    }
+
+    friend class HashList;
 };
 
-class hashtable
+class HashList
 {
-    client ht[max];
+    DictNode *list[size];
 
 public:
-    hashtable()
+    HashList()
     {
-        char str[20] = "---";
-        for (int i = 0; i < max; i++)
+        for (int i = 0; i < size; i++)
         {
-            ht[i].phone = 0;
-            strcpy(ht[i].clientname, str);
+            list[i] = NULL;
         }
     }
 
-    void create_HT1(); //without replacement
-    void create_HT2(); //with replacement
-    void display();
-    int search_HT1(long long);
-    int search_HT2(long long);
-    int del(long long);
-    int hash(long long);
-};
+    int hashFunc(string word)
+    {
+        return ((int)word[0] % 10);
+    }
 
-int hashtable::hash(long long key){
-    return ((3*key +5)%max);
-}
-void hashtable::create_HT1(){
-    client c;
-    int index;
-    char ch;
+    void insert(DictNode *n)
+    {
+        int index = hashFunc(n->key);
 
-    do{
-        cout<<"\nclient name:";
-        cin>>c.clientname;
-        cout<<"\nphone number: ";
-        cin>>c.phone;
+        if (list[index] == NULL)
+        {
+            list[index] = n;
+        }
+        else
+        {
+            DictNode *q = list[index];
+            while (q->next != NULL)
+            {
+                q = q->next;
+            }
+            q->next = n;
+        }
+    }
 
-        index = hash(c.phone);
+    int search(string word)
+    {
+        int hashNo = hashFunc(word);
+        DictNode *q = list[hashNo];
+        while (q != NULL)
+        {
+            if (q->key == word)
+            {
+                cout << "\nMeaning of " << word << " is " << q->value;
+                return 1;
+            }
+            q = q->next;
+        }
+        return 0;
+    }
 
-        if(ht[index].phone == 0){
-            ht[index] = c;
-        }else{
-            for(int i=index+1; i%max!= index; i++){
-                ht[i]=c;
-				break;
+    void del(string word)
+    {
+        int hashNo = hashFunc(word);
+        DictNode *q = list[hashNo];
+        DictNode *par = NULL;
+        while (q != NULL)
+        {
+            if (q->key == word)
+            {
+                if(par == NULL)
+                {
+                    list[hashNo] = q->next;
+                    break;
+                }
+                else
+                {
+                    par->next = q->next;
+                    break;
+                }
+            }
+            par = q;
+            q = q->next;
+        }
+        if (q == NULL)
+        {
+            cout << "\nWord does not exist in dictionary.";
+        }
+    }
+
+    void display()
+    {
+        cout << "\nIndex\tKey-Value pairs";
+        for (int i = 0; i < size; i++)
+        {
+            DictNode *q = list[i];
+            cout << "\n"
+                 << i << "\t";
+            while (q != NULL)
+            {
+                cout << q->key << "->" << q->value << "----";
+                q = q->next;
             }
         }
-        cout<<"\n Add More(y/n):";
-        cin>>ch;
-    }while(ch=='y');
-}
+    }
+};
 
-void hashtable::create_HT2(){
-    client c;
-    int index;
-    char ch;
+int main()
+{
 
-    do{
-        cout<<"\nclient name:";
-        cin>>c.clientname;
-        cout<<"\nphone number: ";
-        cin>>c.phone;
+    HashList HL;
 
-        index = hash(c.phone);
+    int ch;
+    do
+    {
+        cout << "\n\n\t\tMenu:\n\t1.Insert Word\n\t2.Search a word\n\t3.Delete word\n\t4.Exit";
+        cout << "\nEnter your choice : ";
+        cin >> ch;
+        string w;
 
-        if (ht[index].phone == 0)
-            ht[index] = c;
-        else //checking collisions
+        switch (ch)
         {
-            if ((hash(ht[index].phone)) == index)
+        case 1:
+            int cont;
+            do
             {
-                while(ht[index].phone != 0)
-                {
-                    index = (index + 1) % max;
-                }
-                ht[index] = c;
+                string word, meaning;
+                cout << "\nEnter the word to be inserted : ";
+                cin >> word;
+                cout << "\nEnter its meaning : ";
+                cin >> meaning;
+                DictNode *N1 = new DictNode(word, meaning);
+                HL.insert(N1);
+                cout << "\nContinue adding words?(1:yes,2:no)";
+                cin >> cont;
+            } while (cont == 1);
+            HL.display();
+            break;
+
+        case 2:
+            cout << "\nEnter word to be searched : ";
+            cin >> w;
+            if (HL.search(w) == 1)
+            {
+                cout << "\nWord is present in the list.";
             }
             else
             {
-                client temp = ht[index];
-                ht[index] = c;
-                while(ht[index].phone!=0)
-                {
-                    index = (index + 1) % max;
-                }
-                ht[index] = temp;
+                cout << "\nWord is not present in the list.";
             }
+            break;
+
+        case 3:
+            cout << "\nEnter word to be deleted : ";
+            cin >> w;
+            HL.del(w);
+            HL.display();
+            break;
+
+        case 4:
+            cout << "\nExiting program.";
+            break;
+
+        default:
+            cout << "\nWrong choice";
         }
-        cout<<"\n Add More(y/n):";
-        cin>>ch;
-    }while(ch=='y');
+    } while (ch != 4);
+    return 0;
 }
-
-void hashtable::display()
-{
-	cout<<"------------------------------------";
-	cout<<"\nSrno\t Client Name \t   Phone number\n";
-	cout<<"------------------------------------\n";
-	for(int i=0;i<max;i++)
-	{
-		cout<<i<<"\t"<< ht[i].clientname <<"\t" <<ht[i].phone<<endl;
-	}
-	cout<<"------------------------------------\n";
-}
-
-
-int main(){
-    int y,iCh;
-	hashtable h;
-	do
-	{
-		cout<<"\n---------------LIST---------------\n";
-		cout<<"\n1.INSERT\n2.DISPLAY\n3.SEARCH\n4.DELETE\n5.EXIT\n\n";
-		cout<<"Enter your choice:";
-		cin>>iCh;
-		cout<<"\n";
-
-		switch(iCh)
-		{
-			case 1://insert
-				h.create_HT2();
-				cout<<"\n";
-				break;
-
-			case 2://display
-				h.display();
-				cout<<"\n";
-				break;
-
-			case 3://search
-				h.search_HT1(y);
-				cout<<"\n";
-				break;
-
-			case 4://delete
-                int s;
-				h.del(s);
-				cout<<"\n";
-				break;
-
-			case 5://exit
-				break;
-		}//end of switch
-	}while(iCh!=5);//end of do
-return 0;
-}
-
