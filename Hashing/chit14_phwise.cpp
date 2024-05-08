@@ -18,8 +18,6 @@ struct client
 {
 	char clientName[20];
 	long int iPhno;
-	char name[20];
-
 };//end of structure
 
 class hashtable
@@ -79,7 +77,7 @@ int hashtable::hash(long int key)
 {
     int hashval = (3*key+5);
     cout<< key<<" : "<<hashval;
-	return((3*key+5)%max);
+	return(hashval%max);
 }//end of hash
 
 void hashtable::display()
@@ -92,7 +90,7 @@ void hashtable::display()
 		cout<<i<<"\t"<< ht[i].clientName <<"\t" <<ht[i].iPhno<<endl;
 	}
 	cout<<"------------------------------------\n";
-}//end of display
+}//end of display 
 
 int hashtable::search_HT1(int x)
 {
@@ -134,7 +132,8 @@ int hashtable::del(int s)
 
 int main()
 {
-	int y,iCh;
+	int iCh;
+	long long y;
 	hashtable h;
 	do
 	{
@@ -162,7 +161,7 @@ int main()
 				break;
 
 			case 4://delete
-                int s;
+                long long s;
 				h.del(s);
 				cout<<"\n";
 				break;
