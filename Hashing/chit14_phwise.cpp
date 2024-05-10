@@ -45,8 +45,8 @@ public:
     void create_HT2(); //with replacement
     void display1();
     void display2();
-    int search_HT1(long long);
-    int search_HT2(long long);
+    void search_HT1(long long);
+    void search_HT2(long long);
     int del(long long);
     int hash(long long);
 };
@@ -122,7 +122,7 @@ void hashtable::create_HT2(){
     }while(ch=='y');
 }
 
-int hashtable::search_HT1(long long x)
+void hashtable::search_HT1(long long x)
 {
 	int iFlag=0;
 	cout<<"Enter Phone number to be searched:";
@@ -140,7 +140,7 @@ int hashtable::search_HT1(long long x)
 	cout<<"\n Phone Number Not Found";
 }//end of search
 
-int hashtable::search_HT2(long long x)
+void hashtable::search_HT2(long long x)
 {
 	int iFlag=0;
 	cout<<"Enter Phone number to be searched:";
