@@ -2,7 +2,6 @@
 traversals and deletion of a node. Display smallest and largest value in it.
 Note: Display lbit, rbit for every node*/
 
-// Threaded Binary Search Tree.
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -21,7 +20,7 @@ public:
 class tbt
 {
 public:
-    Node *insert(Node *root, int ikey)
+    Node* insert(Node *root, int ikey)
     {
         // Searching for a Node with given value
         Node *ptr = root;
@@ -30,6 +29,7 @@ public:
         {
             // If key already exists, return
             if (ikey == (ptr->info))
+            
             {
                 printf("Duplicate Key !\n");
                 return root;
@@ -61,7 +61,7 @@ public:
         tmp->info = ikey;
         tmp->lthread = true;
         tmp->rthread = true;
-
+ 
         if (par == NULL)
         {
             root = tmp;
@@ -156,8 +156,9 @@ public:
     return ptr;
 }
  
-// Here 'par' is pointer to parent Node and 'ptr' is
-// pointer to current Node.
+// Here 'par' is pointer to parent Node and 'ptr' is pointer to current Node.
+
+//deleting leaf node
 Node* caseA(Node* root, Node* par,
                    Node* ptr)
 {
@@ -181,8 +182,7 @@ Node* caseA(Node* root, Node* par,
     return root;
 }
  
-// Here 'par' is pointer to parent Node and 'ptr' is
-// pointer to current Node.
+//deleting node with 1 child
 Node* caseB(Node* root, Node* par,
                    Node* ptr)
 {
@@ -246,7 +246,7 @@ Node* caseC(Node* root, Node* par,
         root = caseA(root, parsucc, succ);
     else
         root = caseB(root, parsucc, succ);
- 
+
     return root;
 }
  
@@ -304,6 +304,26 @@ Node* delThreadedBST(Node* root, int dkey)
  
     return root;
 }
+
+void minelement(Node* root){
+    if(root == NULL){
+        return;
+    }
+    while(root->lthread!= true){
+        root = root->left;
+    }
+    cout<<"\nMinimum element is: "<<root->info;
+}
+
+void maxelement(Node* root){
+    if(root == NULL){
+        return;
+    }
+    while(root->rthread!= true){
+        root = root->right;
+    }
+    cout<<"\nMaximum element is: "<<root->info;
+}
 };
 
 // Driver Program
@@ -328,7 +348,10 @@ int main()
     cout<<"\nPreorder traversal: ";
     t.preorder(root);
 
-    int i=5;
+    t.maxelement(root);
+    t.minelement(root);
+
+    int i=2;
     while(i>0){
         int delkey;
         cout<<"Enter the key you want to delete: ";
@@ -338,6 +361,7 @@ int main()
 
         i--;
     }
+
     
 
     return 0;

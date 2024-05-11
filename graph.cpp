@@ -51,6 +51,7 @@ public:
             cout << "Queue is full" << endl;
             return;
         }
+
         if (front == -1)
         {
             front = 0;
@@ -228,6 +229,7 @@ public:
         }
         cout << endl;
     }
+    
     void dfs(int src)
     {
         // create a array of visited

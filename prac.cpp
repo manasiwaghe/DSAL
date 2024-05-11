@@ -1,190 +1,66 @@
+	//Delete a node AVL
 
-#include <iostream>
-#define size 10
-using namespace std;
+    
+	// Node* remove(Node *root, string key) {
+	// 	if (root == NULL) {
+	// 		return root;
+	// 	}
 
-class DictNode
-{
-    string key;
-    string value;
-    DictNode *next;
+	// 	if (key < root->key) {
+	// 		root->left = remove(root->left, key);
+	// 	} else if (key > root->key) {
+	// 		root->right = remove(root->right, key);
 
-public:
-    DictNode()
-    {
-        key = "-";
-        value = "-";
-        next = NULL;
-    }
+	// 	} else {
+	// 		if ((root->left == NULL) || (root->right == NULL)) {
+	// 			Node *temp = root->left ? root->left : root->right;
 
-    DictNode(string word, string meaning)
-    {
-        key = word;
-        value = meaning;
-        next = NULL;
-    }
+	// 			if (temp == NULL) {
+	// 				temp = root;
+	// 				root = NULL;
 
-    friend class HashList;
-};
+	// 			} else {
+	// 				*root = *temp;
+	// 			}
 
-class HashList
-{
-    DictNode *list[size];
+	// 			free(temp);
+	// 		} else {
+	// 			Node *temp = minValueNode(root->right);
+	// 			root->key = temp->key;
+	// 			root->meaning = temp->meaning;
+	// 			root->right = remove(root->right, temp->key);
+	// 		}
+	// 	}
 
-public:
-    HashList()
-    {
-        for (int i = 0; i < size; i++)
-        {
-            list[i] = NULL;
-        }
-    }
+	// 	if (root == NULL) {
+	// 		return root;
+	// 	}
 
-    int hashFunc(string word)
-    {
-        return ((int)word[0] % 10);
-    }
+	// 	root->height = 1 + max(height(root->left), height(root->right));
 
-    void insert(DictNode *n)
-    {
-        int index = hashFunc(n->key);
+	// 	int balance = getBF(root);
 
-        if (list[index] == NULL)
-        {
-            list[index] = n;
-        }
-        else
-        {
-            DictNode *q = list[index];
-            while (q->next != NULL)
-            {
-                q = q->next;
-            }
-            q->next = n;
-        }
-    }
+	// 	//LL
+	// 	if (balance > 1 && getBF(root->left) >= 0) {
+	// 		return rotateRight(root);
+	// 	}
 
-    int search(string word)
-    {
-        int hashNo = hashFunc(word);
-        DictNode *q = list[hashNo];
-        while (q != NULL)
-        {
-            if (q->key == word)
-            {
-                cout << "\nMeaning of " << word << " is " << q->value;
-                return 1;
-            }
-            q = q->next;
-        }
-        return 0;
-    }
+	// 	//RR
+	// 	if (balance < -1 && getBF(root->right) < 0) {
+	// 		return rotateLeft(root);
+	// 	}
 
-    void del(string word)
-    {
-        int hashNo = hashFunc(word);
-        DictNode *q = list[hashNo];
-        DictNode *par = NULL;
-        while (q != NULL)
-        {
-            if (q->key == word)
-            {
-                if(par == NULL)
-                {
-                    list[hashNo] = q->next;
-                    break;
-                }
-                else
-                {
-                    par->next = q->next;
-                    break;
-                }
-            }
-            par = q;
-            q = q->next;
-        }
-        if (q == NULL)
-        {
-            cout << "\nWord does not exist in dictionary.";
-        }
-    }
+	// 	//LR
+	// 	if (balance > 1 && getBF(root->left) < 0) {
+	// 		root->left = rotateLeft(root->left);
+	// 		return rotateRight(root);
+	// 	}
 
-    void display()
-    {
-        cout << "\nIndex\tKey-Value pairs";
-        for (int i = 0; i < size; i++)
-        {
-            DictNode *q = list[i];
-            cout << "\n"
-                 << i << "\t";
-            while (q != NULL)
-            {
-                cout << q->key << "->" << q->value << "----";
-                q = q->next;
-            }
-        }
-    }
-};
+	// 	//RL
+	// 	if (balance < -1 && getBF(root->right) > 0) {
+	// 		root->right = rotateRight(root->right);
+	// 		return rotateLeft(root);
+	// 	}
 
-int main()
-{
-
-    HashList HL;
-
-    int ch;
-    do
-    {
-        cout << "\n\n\t\tMenu:\n\t1.Insert Word\n\t2.Search a word\n\t3.Delete word\n\t4.Exit";
-        cout << "\nEnter your choice : ";
-        cin >> ch;
-        string w;
-
-        switch (ch)
-        {
-        case 1:
-            int cont;
-            do
-            {
-                string word, meaning;
-                cout << "\nEnter the word to be inserted : ";
-                cin >> word;
-                cout << "\nEnter its meaning : ";
-                cin >> meaning;
-                DictNode *N1 = new DictNode(word, meaning);
-                HL.insert(N1);
-                cout << "\nContinue adding words?(1:yes,2:no)";
-                cin >> cont;
-            } while (cont == 1);
-            HL.display();
-            break;
-
-        case 2:
-            cout << "\nEnter word to be searched : ";
-            cin >> w;
-            if (HL.search(w) == 1)
-            {
-                cout << "\nWord is present in the list.";
-            }
-            else
-            {
-                cout << "\nWord is not present in the list.";
-            }
-            break;
-
-        case 3:
-            cout << "\nEnter word to be deleted : ";
-            cin >> w;
-            HL.del(w);
-            HL.display();
-            break;
-
-        case 4:
-            cout << "\nExiting program.";
-            break;
-
-        default:
-            cout << "\nWrong choice";
-        }
-    } while (ch != 4);
-    return 0;
-}
+	// 	return root;
+	// }

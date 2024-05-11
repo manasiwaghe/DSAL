@@ -1,3 +1,7 @@
+/*Implement all the functions of a dictionary (ADT) using open hashing technique: separate 
+chaining using linked list Data: Set of (key, value) pairs, Keys are mapped to values, Keys 
+must be comparable, and Keys must be unique. Standard Operations: Insert (key, value), 
+Find(key), Delete(key). Use hash function as H(x) = (3x+5) %10*/
 
 #include <iostream>
 #define size 10
@@ -19,9 +23,9 @@ public:
 
     DictNode(string word, string meaning)
     {
-        key = word;
-        value = meaning;
-        next = NULL;
+        this->key = word;
+        this->value = meaning;
+        this->next = NULL;
     }
 
     friend class HashList;
@@ -42,7 +46,7 @@ public:
 
     int hashFunc(string word)
     {
-        return ((int)word[0] % 10);
+        return ((3*(int)word[0] + 5) % size);
     }
 
     void insert(DictNode *n)
@@ -119,7 +123,7 @@ public:
                  << i << "\t";
             while (q != NULL)
             {
-                cout << q->key << "->" << q->value << "----";
+                cout << q->key << " : " << q->value<<"   --->   ";
                 q = q->next;
             }
         }
@@ -134,7 +138,7 @@ int main()
     int ch;
     do
     {
-        cout << "\n\n\t\tMenu:\n\t1.Insert Word\n\t2.Search a word\n\t3.Delete word\n\t4.Exit";
+        cout << "\n\n\tMenu\n1.Insert Word\n2.Search a word\n3.Delete word\n4.Exit";
         cout << "\nEnter your choice : ";
         cin >> ch;
         string w;

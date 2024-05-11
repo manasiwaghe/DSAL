@@ -79,11 +79,6 @@ class stack{
 
 class bt{
 public:
-	node *root;
-
-	bt(){
-		root=NULL;
-	}
 
 	node* create(node*);
 	void insert(node*);

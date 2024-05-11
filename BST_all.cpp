@@ -71,11 +71,7 @@ class stack{
 
 class BSTree {
 public:
-    node* Node;
 
-    BSTree() {
-        Node = NULL;
-    }
     node* create_BST(node* root);
     void insertnodes(node* root, node* newnode);
     void inorder(node* root);
