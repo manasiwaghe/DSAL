@@ -56,8 +56,6 @@ class SeqFile {
             if (req != info) {
                 fout << info << endl;
             }
-            
-            
         }
         fout.close();
         fin.close();

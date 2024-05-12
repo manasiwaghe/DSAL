@@ -104,7 +104,7 @@ public:
     void inorder(Node *root)
     {
         if (root == NULL)
-            printf("Tree is empty");
+            cout<<"Tree is empty";
 
         // Reach leftmost node
         Node *ptr = root;
@@ -124,7 +124,7 @@ public:
         Node *ptr;
         if (root == NULL)
         {
-            printf("Tree is empty");
+            cout<<"Tree is empty";
             return;
         }
         ptr = root;
